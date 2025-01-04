@@ -36,7 +36,7 @@ export class UserRegisterController {
         key: user.email,
       }),
     );
-    const expiresIn = 60 * 60 * 24 * 30 * 6; // !CLIENT REQUEST: auth token  expired in 6 months
+    const expiresIn = 60 * 60 * 24 * 30 * 6;
     const token = this.authService.generateJWT(auth, { expiresIn });
     return DataResponse.ok({
       message: 'Successfully registered',

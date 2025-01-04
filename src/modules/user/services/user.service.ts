@@ -1,13 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { USER_MODEL_PROVIDER } from '../providers';
 import { Model } from 'mongoose';
 import { UserModel } from '../models';
 import { RegisterPayload } from 'src/modules/auth/payloads';
 import { UserCreateDto } from '../dtos';
-import {
-  EntityNotFoundException,
-  ForbiddenException,
-} from 'src/kernel/exceptions';
+import { EntityNotFoundException } from 'src/kernel/exceptions';
 import { ROLE, STATUS } from '../constans';
 
 @Injectable()
@@ -29,7 +26,7 @@ export class UserService {
     const existUser = await this.userModel.findOne({
       userName: payload.username,
     });
-    if (existUser) throw new ForbiddenException();
+    if (existUser) throw new BadRequestException();
     const user = await this.userModel.create({
       ...payload,
       userName: payload.username,

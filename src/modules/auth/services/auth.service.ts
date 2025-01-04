@@ -17,7 +17,9 @@ export class AuthService {
   }
 
   public encryptPassword(pw: string, salt: string): string {
+    // Số lần lặp của thuật toán PBKDF2
     const defaultIterations = 10000;
+    //  Độ dài của kết quả mã hóa
     const defaultKeyLength = 64;
 
     return crypto
@@ -49,24 +51,26 @@ export class AuthService {
     if (['email', 'username'].includes(data.type) && newVal) {
       newVal = this.encryptPassword(newVal, salt);
     }
-
-    let auth = await this.authModel.findOne({
-      type: data.type,
-      source: data.source,
-      sourceId: data.sourceId,
-    });
-    if (!auth) {
-      auth = new this.authModel({
+    const auth = await this.authModel.findOneAndUpdate(
+      {
         type: data.type,
         source: data.source,
         sourceId: data.sourceId,
-      });
-    }
+      },
+      {
+        $set: {
+          salt: salt,
+          value: newVal,
+          key: data.key,
+        },
+      },
+      {
+        new: true,
+        upsert: true,
+      },
+    );
 
-    auth.salt = salt;
-    auth.value = newVal;
-    auth.key = data.key;
-    return auth.save();
+    return auth || null;
   }
 
   public async findBySource(options: {
