@@ -3,7 +3,7 @@ import { ObjectId } from 'mongodb';
 export class AuthCreateDto {
   source = 'user';
 
-  sourceId: ObjectId;
+  sourceId: ObjectId | string;
 
   type = 'email';
 
@@ -14,7 +14,7 @@ export class AuthCreateDto {
   constructor(data: Partial<AuthCreateDto>) {
     this.source = data.source || 'user';
     this.type = data.type || 'email';
-    this.sourceId = data.sourceId;
+    this.sourceId = data.sourceId || '';
     this.key = data.key;
     this.value = data.value;
   }

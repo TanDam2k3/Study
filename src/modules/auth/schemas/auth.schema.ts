@@ -8,7 +8,6 @@ export const AuthSchema = new Schema({
   },
   sourceId: {
     type: ObjectId,
-    default: '',
   },
   type: {
     type: String,

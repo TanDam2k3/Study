@@ -13,6 +13,7 @@ import { RegisterPayload } from '../payloads';
 import { AuthCreateDto } from '../dtos/auth.dto';
 import { SOURCE_TYPE } from '../constans';
 import { DataResponse } from 'src/kernel/models';
+import { EntityNotFoundException } from 'src/kernel/exceptions';
 
 @Controller('auth')
 export class UserRegisterController {
@@ -27,10 +28,11 @@ export class UserRegisterController {
   @HttpCode(HttpStatus.OK)
   async registerUser(@Body() payload: RegisterPayload) {
     const user = await this.userService.register(payload);
+    if (!user) throw new EntityNotFoundException();
     const auth = await this.authService.create(
       new AuthCreateDto({
         source: SOURCE_TYPE.USER,
-        sourceId: user._id,
+        sourceId: user?._id || '',
         type: 'email',
         value: payload.password,
         key: user.email,
